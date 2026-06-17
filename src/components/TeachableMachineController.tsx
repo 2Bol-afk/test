@@ -42,18 +42,18 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
     setSimulatorPreset(preset);
     if (preset === 'expression') {
       const exprValues = {
-        'Neutral Face': 0.90,
-        'Smile / Open Mouth': 0.05,
-        'Frown / Wink': 0.05
+        'Sad': 0.90,
+        'Happy': 0.05,
+        'Angry': 0.05
       };
       setSimValues(exprValues);
       setClassLabels(Object.keys(exprValues));
       onConfigChange({
         ...config,
         mappings: {
-          neutral: 'Neutral Face',
-          jump: 'Smile / Open Mouth',
-          crouch: 'Frown / Wink'
+          neutral: 'Sad',
+          jump: 'Happy',
+          crouch: 'Angry'
         }
       });
     } else {
@@ -149,13 +149,13 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
             neutral: 'Idle'
           }
         });
-      } else if (simClassNames.includes('Neutral Face') && simClassNames.includes('Smile / Open Mouth') && simClassNames.includes('Frown / Wink')) {
+      } else if (simClassNames.includes('Sad') && simClassNames.includes('Happy') && simClassNames.includes('Angry')) {
         onConfigChange({
           ...config,
           mappings: {
-            jump: 'Smile / Open Mouth',
-            crouch: 'Frown / Wink',
-            neutral: 'Neutral Face'
+            jump: 'Happy',
+            crouch: 'Angry',
+            neutral: 'Sad'
           }
         });
       }
@@ -227,7 +227,6 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
           lLower.includes('blink') || 
           lLower.includes('close') || 
           lLower.includes('squint') || 
-          lLower.includes('sad') || 
           lLower.includes('angry')
         ) {
           mappings.crouch = label;
@@ -238,7 +237,8 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
           lLower.includes('run') || 
           lLower.includes('face') || 
           lLower.includes('normal') || 
-          lLower.includes('straight')
+          lLower.includes('straight') ||
+          lLower.includes('sad')
         ) {
           mappings.neutral = label;
         }
@@ -699,7 +699,15 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
               else if (isMatchCrouch && isMetThreshold) barColor = 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.6)]';
               else if (p.probability >= 0.5) barColor = 'bg-cyan-550/50';
 
-              const labelIcon = isMatchJump ? '🦘 [Jump]' : (isMatchCrouch ? '🧘 [Crouch]' : '🏃 [Neutral]');
+              let labelIcon = isMatchJump ? '🦘 [Jump]' : (isMatchCrouch ? '🧘 [Crouch]' : '🏃 [Neutral]');
+              const classNameLower = p.className.toLowerCase();
+              if (classNameLower.includes('happy')) {
+                labelIcon = '😀 [Happy → Jump-Up]';
+              } else if (classNameLower.includes('angry')) {
+                labelIcon = '😡 [Angry → Crouch-Down]';
+              } else if (classNameLower.includes('sad')) {
+                labelIcon = '😢 [Sad → Neutral-Run]';
+              }
 
               return (
                 <div key={p.className} className="flex flex-col gap-1">

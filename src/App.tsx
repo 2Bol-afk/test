@@ -285,7 +285,7 @@ export default function App() {
                     
                     <ol className="list-decimal pl-5 mt-2 space-y-3">
                       <li>
-                        <strong className="text-white font-sans">Train Poses or Expressions:</strong> Open <a href="https://teachablemachine.withgoogle.com/" target="_blank" rel="noreferrer noopener" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">Teachable Machine <ExternalLink className="w-3 h-3" /></a> and choose "Image Project". Create three classes (e.g. "Neutral Face", "Smile / Open Mouth", "Frown / Wink" or "Idle", "Jump", "Crouch"). Record several webcam snapshots of your face or body postures for each.
+                        <strong className="text-white font-sans">Train Poses or Expressions:</strong> Open <a href="https://teachablemachine.withgoogle.com/" target="_blank" rel="noreferrer noopener" className="text-cyan-400 hover:underline inline-flex items-center gap-0.5">Teachable Machine <ExternalLink className="w-3 h-3" /></a> and choose "Image Project". Create three classes (e.g. "Happy", "Sad", "Angry" or "Idle", "Jump", "Crouch"). Record several webcam snapshots of your face or body postures for each.
                       </li>
                       <li>
                         <strong className="text-white font-sans">Export Link:</strong> Click "Export Model", select "Tensorflow.js" and submit "Upload my model" to obtain the hosted share URL (looks like <code className="text-cyan-300">https://teachablemachine.withgoogle.com/models/ab12XY/</code>).
