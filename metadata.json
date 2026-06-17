@@ -1,0 +1,10 @@
+{
+  "name": "8-Bit TM Platformer",
+  "description": "An 8-bit retro platformer inspired by the Google offline runner game, controlled using your webcam and a Teachable Machine model for jumps and crouches.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
