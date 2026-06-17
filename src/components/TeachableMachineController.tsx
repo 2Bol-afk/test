@@ -122,9 +122,16 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
     }
   };
 
-  // Safe loading effect
+  // Safe loading effect — also auto-loads model if URL is pre-configured
   useEffect(() => {
-    loadScripts();
+    const init = async () => {
+      const ready = await loadScripts();
+      // Auto-load if a model URL is already set (e.g. local /model/)
+      if (ready && config.modelUrl && !config.isModelLoaded) {
+        await loadModel(config.modelUrl);
+      }
+    };
+    init();
     return () => {
       // Cleanup Webcams & loops on unmount
       stopPredictor();
@@ -206,6 +213,7 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
       labels.forEach((label: string) => {
         const lLower = label.toLowerCase();
         if (
+          lLower === 'angry' ||
           lLower.includes('jump') || 
           lLower.includes('up') || 
           lLower.includes('raise') || 
@@ -216,8 +224,14 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
           lLower.includes('laugh') || 
           lLower.includes('teeth')
         ) {
-          mappings.jump = label;
+          // angry → jump (per user's local model config)
+          if (lLower === 'angry') {
+            mappings.jump = label;
+          } else if (!mappings.jump || mappings.jump === 'Jump') {
+            mappings.jump = label;
+          }
         } else if (
+          lLower === 'sad' ||
           lLower.includes('crouch') || 
           lLower.includes('down') || 
           lLower.includes('duck') || 
@@ -226,20 +240,21 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
           lLower.includes('wink') || 
           lLower.includes('blink') || 
           lLower.includes('close') || 
-          lLower.includes('squint') || 
-          lLower.includes('angry')
+          lLower.includes('squint')
         ) {
+          // sad → crouch (per user's local model config)
           mappings.crouch = label;
         } else if (
+          lLower === 'happy' ||
           lLower.includes('idle') || 
           lLower.includes('neutral') || 
           lLower.includes('stand') || 
           lLower.includes('run') || 
           lLower.includes('face') || 
           lLower.includes('normal') || 
-          lLower.includes('straight') ||
-          lLower.includes('sad')
+          lLower.includes('straight')
         ) {
+          // happy → neutral/run (per user's local model config)
           mappings.neutral = label;
         }
       });
@@ -441,6 +456,11 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
             MOTION DETECTOR SETUP
           </h2>
           <div className="flex gap-2">
+            {config.isModelLoaded && (
+              <span className="px-2.5 py-1 rounded border bg-emerald-950/60 border-emerald-600/50 text-emerald-400 font-mono text-[10px] font-bold flex items-center gap-1">
+                ✅ LOCAL MODEL ACTIVE
+              </span>
+            )}
             <button
               onClick={() => {
                 setUseSimulator(!useSimulator);
@@ -457,17 +477,17 @@ export const TeachableMachineController: React.FC<TeachableMachineControllerProp
           </div>
         </div>
         <p className="text-xs text-slate-400 font-mono mt-1">
-          Hook up standard Teachable Machine output to move the character via webcam.
+          Local emotion model pre-loaded: 😡 Angry = Jump · 😢 Sad = Crouch · 😊 Happy = Run
         </p>
       </div>
 
       {/* Model Input Matrix */}
       <div className="flex flex-col gap-3">
-        <label className="text-xs font-bold text-slate-350 font-mono">Teachable Machine Model URL:</label>
+        <label className="text-xs font-bold text-slate-350 font-mono">Teachable Machine Model URL (or local path):</label>
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="https://teachablemachine.withgoogle.com/models/mY_m0deL/"
+            placeholder="/model/ (local) or https://teachablemachine.withgoogle.com/models/..."
             value={config.modelUrl}
             onChange={(e) => onConfigChange({ ...config, modelUrl: e.target.value })}
             className="flex-1 px-3 py-2 bg-slate-950 text-white border border-slate-800 rounded-lg focus:outline-none focus:border-cyan-500 font-mono text-xs placeholder:text-slate-650"

@@ -29,16 +29,17 @@ export default function App() {
   const [difficulty, setDifficulty] = useState<'normal' | 'hard' | 'overdrive'>('normal');
 
   // Teachable Machine Configuration State
+  // Pre-wired to local model: angry → JUMP, sad → CROUCH, happy → NEUTRAL/RUN
   const [tmConfig, setTmConfig] = useState<TMConfig>({
-    modelUrl: '',
+    modelUrl: '/model/',
     isModelLoaded: false,
     isWebcamActive: false,
     mappings: {
-      jump: 'Jump',
-      crouch: 'Crouch',
-      neutral: 'Idle'
+      jump: 'angry',
+      crouch: 'sad',
+      neutral: 'happy'
     },
-    confidenceThreshold: 0.85
+    confidenceThreshold: 0.80
   });
 
   // Dynamic Instructions Dialog Toggle
@@ -198,10 +199,11 @@ export default function App() {
             <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/20 backdrop-blur-md flex gap-4 shadow-[0_0_10px_rgba(6,182,212,0.05)]">
               <Info className="w-5 h-5 text-cyan-450 shrink-0 mt-0.5" />
               <div className="text-xs font-mono text-slate-400 leading-relaxed">
-                <span className="font-bold text-slate-200 block mb-1">PRO-TIPS FOR BEST MOTION CONTROLS:</span>
-                1. <span className="text-cyan-400 font-bold">FACIAL EXPRESSIONS:</span> Train your model on face poses! Map a <span className="text-cyan-400 font-bold">Smile or Open Mouth</span> to JUMP, and a <span className="text-rose-400 font-bold">Wink or Frown</span> to CROUCH.<br />
-                2. <span className="text-cyan-400 font-bold">BODY POSTURES:</span> Stand 1-2 meters back. Use fast movements like hands raised high to JUMP and bowing down to CROUCH.<br />
-                3. Set the sensitivity threshold slider to 80-85% to filter out tracking jitter.
+                <span className="font-bold text-slate-200 block mb-1">🤖 LOCAL MODEL LOADED — EMOTION CONTROLS ACTIVE:</span>
+                1. <span className="text-rose-400 font-bold">😡 ANGRY FACE</span> → Character <span className="text-cyan-400 font-bold">JUMPS</span> over obstacles.<br />
+                2. <span className="text-blue-400 font-bold">😢 SAD FACE</span> → Character <span className="text-amber-400 font-bold">CROUCHES</span> under obstacles.<br />
+                3. <span className="text-emerald-400 font-bold">😊 HAPPY FACE</span> → Character <span className="text-slate-300 font-bold">RUNS</span> normally (neutral state).<br />
+                4. Click <span className="text-cyan-400 font-bold">CONNECT</span> in the controller panel to activate your webcam.
               </div>
             </div>
 
